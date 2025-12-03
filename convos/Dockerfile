@@ -16,8 +16,10 @@ RUN apk add --no-cache \
       ca-certificates \
       curl \
       jq \
-  && curl -L https://cpanmin.us | perl - App::cpanminus \
-  && cpanm --notest Convos
+  && curl -L https://cpanmin.us -o /usr/local/bin/cpanm \
+  && chmod +x /usr/local/bin/cpanm \
+  && /usr/local/bin/cpanm --notest Convos \
+  && rm -rf /root/.cpanm /root/.cpan
 
 # Copiamos rootfs dentro del contenedor
 COPY rootfs/ /
