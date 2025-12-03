@@ -1,0 +1,19 @@
+#!/command/with-contenv bash
+set -e
+
+CONFIG_DIR="/config/convos"
+OPTIONS_FILE="/data/options.json"
+
+mkdir -p "${CONFIG_DIR}"
+chmod -R 777 "${CONFIG_DIR}"
+
+CONVOS_PORT=$(jq -r '.convos_port' "${OPTIONS_FILE}")
+if [ -z "${CONVOS_PORT}" ] || [ "${CONVOS_PORT}" = "null" ]; then
+  CONVOS_PORT=8095
+fi
+
+export CONVOS_HOME="${CONFIG_DIR}"
+export CONVOS_REVERSE_PROXY=1
+export CONVOS_INVITE_ONLY=0
+
+exec convos daemon -m production -l http://0.0.0.0:${CONVOS_PORT}
