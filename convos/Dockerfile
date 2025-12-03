@@ -1,22 +1,26 @@
 ARG BUILD_FROM
 FROM ${BUILD_FROM}
 
+# Entorno básico
 ENV LANG=C.UTF-8
 ENV TERM=xterm
 
-RUN apt-get update \
- && apt-get install -y --no-install-recommends \
+# Instalamos Perl, compilación y utilidades en Alpine
+RUN apk add --no-cache \
       perl \
-      build-essential \
-      libssl-dev \
-      libpq-dev \
+      perl-utils \
+      make \
+      g++ \
+      openssl-dev \
+      postgresql-dev \
       ca-certificates \
       curl \
       jq \
-      cpanminus \
- && cpanm --notest Convos \
- && rm -rf /root/.cpanm /root/.cpan /var/lib/apt/lists/*
+  && curl -L https://cpanmin.us | perl - App::cpanminus \
+  && cpanm --notest Convos
 
+# Copiamos rootfs dentro del contenedor
 COPY rootfs/ /
 
+# Aseguramos permisos de ejecución en el servicio
 RUN chmod +x /etc/services.d/convos/run
