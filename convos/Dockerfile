@@ -5,21 +5,19 @@ FROM ${BUILD_FROM}
 ENV LANG=C.UTF-8
 ENV TERM=xterm
 
-# Instalamos Perl, compilación y utilidades en Alpine
-RUN apk add --no-cache \
+# Instalamos Perl, compilación y utilidades en Debian
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
       perl \
-      perl-utils \
-      make \
-      g++ \
-      openssl-dev \
-      postgresql-dev \
+      build-essential \
+      libssl-dev \
+      libpq-dev \
       ca-certificates \
       curl \
       jq \
-  && curl -L https://cpanmin.us -o /usr/local/bin/cpanm \
-  && chmod +x /usr/local/bin/cpanm \
-  && /usr/local/bin/cpanm --notest Convos \
-  && rm -rf /root/.cpanm /root/.cpan
+      cpanminus \
+ && cpanm --notest Convos \
+ && rm -rf /var/lib/apt/lists/* /root/.cpanm /root/.cpan
 
 # Copiamos rootfs dentro del contenedor
 COPY rootfs/ /
